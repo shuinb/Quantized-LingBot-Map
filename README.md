@@ -6,7 +6,7 @@
 
 A compact post-training quantization and inference project built on [LingBot-Map](https://github.com/Robbyant/lingbot-map). It compares three methods for streaming 3D mapping, with shared image processing and window settings.
 
-[GitHub source](https://github.com/shuinb/Quantized-LingBot-Map) · [DSFQ weights and results on Hugging Face](https://huggingface.co/datasets/shuinb/Quantized-LingBot-Map)
+[GitHub source](https://github.com/shuinb/Quantized-LingBot-Map) · [DSFQ weights and results on Hugging Face](https://huggingface.co/shuinb/Quantized-LingBot-Map)
 
 ## What changed
 
@@ -68,11 +68,11 @@ The native backend needs a CUDA toolkit with `nvcc`; set `CUDA_HOME` if it is no
 
 ## Download the calibrated DSFQ weights
 
-The [Hugging Face dataset repository](https://huggingface.co/datasets/shuinb/Quantized-LingBot-Map) hosts the standalone DSFQ checkpoint, source archive and recorded results:
+The [Hugging Face model repository](https://huggingface.co/shuinb/Quantized-LingBot-Map) hosts the standalone DSFQ checkpoint, source archive and recorded results:
 
 ```bash
 hf download shuinb/Quantized-LingBot-Map models/dsfq/model.pt \
-  --repo-type dataset --local-dir .
+  --local-dir .
 ```
 
 Use the downloaded checkpoint with the DSFQ inference command below. To reproduce calibration or create direct W4A4 weights, follow the next section.

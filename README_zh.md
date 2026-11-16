@@ -6,7 +6,7 @@
 
 基于 [LingBot-Map](https://github.com/Robbyant/lingbot-map) 的训练后量化与推理项目，用统一的图像处理和分窗设置比较三种流式三维建图方法。
 
-[GitHub 源码](https://github.com/shuinb/Quantized-LingBot-Map) · [Hugging Face DSFQ 权重与结果](https://huggingface.co/datasets/shuinb/Quantized-LingBot-Map)
+[GitHub 源码](https://github.com/shuinb/Quantized-LingBot-Map) · [Hugging Face DSFQ 权重与结果](https://huggingface.co/shuinb/Quantized-LingBot-Map)
 
 ## 大概改了什么
 
@@ -68,11 +68,11 @@ hf download robbyant/lingbot-map lingbot-map.pt --local-dir checkpoints
 
 ## 下载已校准的 DSFQ 权重
 
-[Hugging Face 数据集仓库](https://huggingface.co/datasets/shuinb/Quantized-LingBot-Map) 提供可独立推理的 DSFQ 权重、源码压缩包和已记录结果：
+[Hugging Face 模型仓库](https://huggingface.co/shuinb/Quantized-LingBot-Map) 提供可独立推理的 DSFQ 权重、源码压缩包和已记录结果：
 
 ```bash
 hf download shuinb/Quantized-LingBot-Map models/dsfq/model.pt \
-  --repo-type dataset --local-dir .
+  --local-dir .
 ```
 
 下载后可直接执行下方的 DSFQ 推理命令。复现校准或生成直接 W4A4 权重时，继续按照下一节操作。
