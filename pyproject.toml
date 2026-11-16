@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quantized-lingbot-map"
+version = "0.1.0"
+description = "BF16, calibrated W4A4 and DSFQ for streaming 3D mapping with LingBot-Map"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+dependencies = [
+  "torch>=2.9,<3", "torchvision>=0.24,<1", "numpy", "scipy", "Pillow",
+  "einops", "opencv-python", "tqdm", "huggingface_hub", "safetensors"
+]
+
+[project.optional-dependencies]
+eval = ["evo==1.30.0", "matplotlib"]
+native = ["ninja", "triton>=3.5", "nvidia-ml-py"]
+
+[project.scripts]
+qmap = "qmap.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["lingbot_map*", "qmap*"]
+
+[tool.setuptools.package-data]
+"lingbot_map.quantization" = ["csrc/*.cpp", "csrc/*.cu", "csrc/*.cuh"]
+"qmap" = ["configs/*.json"]

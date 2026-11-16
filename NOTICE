@@ -1,0 +1,27 @@
+Quantized-LingBot-Map
+
+This project is derived from LingBot-Map by Robbyant and its contributors:
+https://github.com/Robbyant/lingbot-map
+LingBot-Map is distributed under the Apache License 2.0. Original source
+copyright and attribution notices are retained in the copied files.
+
+The quantization implementation follows QuantVGGT's local Hadamard rotation,
+channel smoothing, learned weight clipping and learned activation clipping:
+https://github.com/wlfeng0509/QuantVGGT
+QuantVGGT is distributed under the Apache License 2.0. Streaming state capture,
+calibrated direct W4A4, packed inference, compressed KV storage and the project
+command-line tools are adaptations in this repository.
+
+Native signed INT4 GEMM uses NVIDIA CUTLASS v3.5.1, installed separately:
+https://github.com/NVIDIA/cutlass
+CUTLASS retains its own BSD-3-Clause license. It is not bundled here.
+
+The CUDA/streaming model integration and image loading files contain local
+modifications. Evaluation adapters retain the LingBot-Map metric definitions.
+The included result figures are derived from the TUM RGB-D dataset and the
+Indoor Travel evaluation sequence. TUM RGB-D dataset attribution:
+J. Sturm et al., A Benchmark for the Evaluation of RGB-D SLAM Systems, IROS 2012.
+https://cvg.cit.tum.de/data/datasets/rgbd-dataset
+
+Model checkpoints and datasets are obtained separately under their original
+terms. This repository does not redistribute weights, videos or image datasets.

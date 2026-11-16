@@ -1,0 +1,249 @@
+{
+  "date": "2026-11-16",
+  "scope": "Audit of the existing LWC/LAC-only direct W4A4 artifact. No fitting or parameter selection on XYZ or Indoor.",
+  "calibration": {
+    "clips": [
+      {
+        "id": "tum_fr1_desk",
+        "start": 192,
+        "frames": 160
+      },
+      {
+        "id": "tum_fr1_rpy",
+        "start": 448,
+        "frames": 160
+      }
+    ],
+    "frames": 320,
+    "states_per_block": 6,
+    "epochs": 15,
+    "optimizer_steps_per_block": 90,
+    "objective": "FP32 block output MSE on clean teacher inputs and original KV history",
+    "original_weights_trained": false
+  },
+  "checks": {
+    "repacked_layers": 192,
+    "repacked_tensors": 768,
+    "all_repacked_tensors_equal": true,
+    "replayed_blocks": 48,
+    "replayed_states": 288,
+    "teacher_replay_max_abs": 0.0,
+    "native_int8_max_abs": 0.0,
+    "blocks_with_lower_packed_mse_after_calibration": 46
+  },
+  "reconstruction_mean_over_blocks": {
+    "fake_uncalibrated_fp32": {
+      "mse": 0.07602380638493539,
+      "relative_mse": 0.009380697140441915,
+      "max_abs": 5.28670249444743
+    },
+    "fake_calibrated_fp32": {
+      "mse": 0.07088545891815556,
+      "relative_mse": 0.008763825883514768,
+      "max_abs": 5.243532787180609
+    },
+    "teacher_replay_vs_capture": {
+      "mse": 0.0,
+      "relative_mse": 0.0,
+      "max_abs": 0.0
+    },
+    "fp32_teacher_vs_bf16_teacher": {
+      "mse": 2.2281732711228647e-05,
+      "relative_mse": 8.741295342305429e-07,
+      "max_abs": 0.17912160305099356
+    },
+    "fake_calibrated_bf16": {
+      "mse": 0.07101046449560676,
+      "relative_mse": 0.00878396197837551,
+      "max_abs": 5.2471961792972355
+    },
+    "packed_calibrated_native_bf16": {
+      "mse": 0.07113646609205818,
+      "relative_mse": 0.008787814694732882,
+      "max_abs": 5.2532365669806795
+    },
+    "packed_calibrated_int8_bf16": {
+      "mse": 0.07113646609205818,
+      "relative_mse": 0.008787814694732882,
+      "max_abs": 5.2532365669806795
+    },
+    "packed_int8_vs_native": {
+      "mse": 0.0,
+      "relative_mse": 0.0,
+      "max_abs": 0.0
+    },
+    "packed_uncalibrated_native_bf16": {
+      "mse": 0.07600340747484956,
+      "relative_mse": 0.009417261697297143,
+      "max_abs": 5.297654876278506
+    },
+    "packed_dsfq_native_bf16": {
+      "mse": 0.0034184708594264318,
+      "relative_mse": 0.0004078915047772267,
+      "max_abs": 0.8805423470007049
+    }
+  },
+  "packed_local_mse_reduction": 0.06403583134613944,
+  "clipping": {
+    "clip_factor_a": {
+      "min": 0.97077876329422,
+      "max": 0.9878799319267273
+    },
+    "clip_factor_w": {
+      "min": 0.9697740077972412,
+      "max": 0.9884605407714844
+    }
+  },
+  "xyz": {
+    "frames": 732,
+    "input_start": 64,
+    "reference_kind": "ground_truth",
+    "rows": [
+      {
+        "label": "BF16",
+        "kv_format": "original",
+        "pose": {
+          "ate": 0.03312036526585838,
+          "rpe_trans": 0.008262992970096356,
+          "rpe_rot": 0.36174560618492546
+        },
+        "depth_abs_rel": 0.041489206554478644,
+        "depth_rmse": 0.16230423745309475,
+        "peak_allocated_bytes": 9807114240,
+        "peak_reserved_bytes": 17047748608
+      },
+      {
+        "label": "Direct_uncalibrated",
+        "kv_format": "fp4",
+        "pose": {
+          "ate": 0.07713779163156949,
+          "rpe_trans": 0.040692976563523615,
+          "rpe_rot": 0.9933095203934884
+        },
+        "depth_abs_rel": 0.06005641320393794,
+        "depth_rmse": 0.15391237505006364,
+        "peak_allocated_bytes": 4811316736,
+        "peak_reserved_bytes": 5154799616
+      },
+      {
+        "label": "Direct_calibrated",
+        "kv_format": "fp4",
+        "pose": {
+          "ate": 0.08804744538348537,
+          "rpe_trans": 0.03843927005410976,
+          "rpe_rot": 0.9658386196535695
+        },
+        "depth_abs_rel": 0.05600159256027716,
+        "depth_rmse": 0.14977843924631873,
+        "peak_allocated_bytes": 4811415040,
+        "peak_reserved_bytes": 5152702464
+      },
+      {
+        "label": "DSFQ_calibrated",
+        "kv_format": "fp4",
+        "pose": {
+          "ate": 0.03389294161779397,
+          "rpe_trans": 0.01561391921515857,
+          "rpe_rot": 0.5589564102435232
+        },
+        "depth_abs_rel": 0.042055734526043165,
+        "depth_rmse": 0.16170043406108245,
+        "peak_allocated_bytes": 4814167552,
+        "peak_reserved_bytes": 5156896768
+      },
+      {
+        "label": "Direct_uncalibrated_original_KV",
+        "kv_format": "original",
+        "pose": {
+          "ate": 0.08180295368282339,
+          "rpe_trans": 0.0402750553694617,
+          "rpe_rot": 0.9450574541772302
+        },
+        "depth_abs_rel": 0.059296903104068266,
+        "depth_rmse": 0.15391352516562207,
+        "peak_allocated_bytes": 9027345408,
+        "peak_reserved_bytes": 16489906176
+      },
+      {
+        "label": "Direct_calibrated_original_KV",
+        "kv_format": "original",
+        "pose": {
+          "ate": 0.0618280951781375,
+          "rpe_trans": 0.04088765646095593,
+          "rpe_rot": 0.9294690092859793
+        },
+        "depth_abs_rel": 0.05636306512946474,
+        "depth_rmse": 0.15055304309290027,
+        "peak_allocated_bytes": 9027443712,
+        "peak_reserved_bytes": 16489906176
+      }
+    ]
+  },
+  "indoor": {
+    "frames": 5000,
+    "reference_kind": "BF16 predictions, not ground truth",
+    "translation_units": "BF16 coordinate units, not verified meters",
+    "rows": [
+      {
+        "label": "Direct_uncalibrated",
+        "kv_format": "fp4",
+        "pose": {
+          "ate": 6.6233561207597695,
+          "rpe_trans": 0.17870257581460755,
+          "rpe_rot": 4.277878945108535
+        },
+        "depth_abs_rel": 0.46254931551170897,
+        "depth_rmse": 1.1282852459978883,
+        "peak_allocated_bytes": 4811316736,
+        "peak_reserved_bytes": 5154799616
+      },
+      {
+        "label": "Direct_calibrated",
+        "kv_format": "fp4",
+        "pose": {
+          "ate": 5.241354482511423,
+          "rpe_trans": 0.1959061179111066,
+          "rpe_rot": 2.6262660493283985
+        },
+        "depth_abs_rel": 0.37964945675769046,
+        "depth_rmse": 0.9453356054064349,
+        "peak_allocated_bytes": 4811415040,
+        "peak_reserved_bytes": 5152702464
+      },
+      {
+        "label": "DSFQ_calibrated",
+        "kv_format": "fp4",
+        "pose": {
+          "ate": 0.3043746547078517,
+          "rpe_trans": 0.03106598595519483,
+          "rpe_rot": 0.5811617210710321
+        },
+        "depth_abs_rel": 0.02166818414685505,
+        "depth_rmse": 0.06833566631596706,
+        "peak_allocated_bytes": 4814167552,
+        "peak_reserved_bytes": 5156896768
+      },
+      {
+        "label": "Direct_calibrated_original_KV",
+        "kv_format": "original",
+        "pose": {
+          "ate": 6.040744260994612,
+          "rpe_trans": 0.16887810005145973,
+          "rpe_rot": 3.225312205574033
+        },
+        "depth_abs_rel": 0.37881043635961326,
+        "depth_rmse": 0.9169356099356749,
+        "peak_allocated_bytes": 9027443712,
+        "peak_reserved_bytes": 16489906176
+      }
+    ]
+  },
+  "notes": [
+    "Original KV controls store BF16 operands used by SDPA; they exceed the 6 GB deployment memory target.",
+    "Direct calibrated/uncalibrated XYZ controls share image order, precision, compilation, camera graph and window settings; cache storage/reservation and allocator budget differ.",
+    "Local reconstruction uses original teacher histories and does not measure accumulated student-history errors.",
+    "Epoch 1 training loss is an average during updates, not the uncalibrated loss. The separate replay measures uncalibrated and calibrated artifacts directly.",
+    "Pose ATE uses one global Sim(3). GT depth uses per-frame median scale alignment. Indoor depth consistency has no scale alignment.",
+    "Each new sequence control is one deterministic run, not a multi-seed statistical study. Runtime changes from the older BF16 reference remain recorded in the full comparison files."
+  ]
+}

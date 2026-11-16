@@ -1,0 +1,12 @@
+{
+  "clips": [
+    {"id": "tum_fr1_desk", "images": "../data/desk/images", "start": 192, "frames": 160},
+    {"id": "tum_fr1_rpy", "images": "../data/rpy/images", "start": 448, "frames": 160}
+  ],
+  "samples_per_clip": 3,
+  "reconstruction_epochs": 15,
+  "reconstruction_lr": 0.001,
+  "image_size": 518,
+  "max_height": 294,
+  "note": "Paths are relative to this JSON. Both quantized methods use the same 320 sequence-disjoint calibration frames. Do not calibrate on XYZ or the evaluation video."
+}

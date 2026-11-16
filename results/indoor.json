@@ -1,0 +1,220 @@
+{
+  "dataset": "Indoor Travel",
+  "frames": 5000,
+  "reference_kind": "BF16 prediction only; no ground truth",
+  "evaluation_protocol": "Full-trajectory Sim(3) ATE/RPE; GT depth uses per-frame median scale alignment; BF16 depth consistency is unaligned.",
+  "calibration": "Independent fr1/desk frames 192:352 and fr1/rpy frames 448:608, 320 frames total, 15 reconstruction epochs.",
+  "notes": "BF16 consistency is not GT accuracy. Runtime differences are explicit; no causal speedup is inferred across hardware/cache changes. Memory uses decimal GB and includes startup. Process memory is sampled and can miss brief transients; allocated/reserved peaks are recorded separately.",
+  "methods": [
+    {
+      "method": "BF16",
+      "fps_repeats": [
+        11.116924777601051,
+        10.634443143148955,
+        10.561491384501043
+      ],
+      "peak_allocated_bytes": 9836945408,
+      "peak_reserved_bytes": 17171480576,
+      "runtime": {
+        "gpu": "NVIDIA GeForce RTX 5090",
+        "linear_backend": "bf16",
+        "trunk_precision": "bf16",
+        "camera_precision": "fp32",
+        "depth_precision": "fp32",
+        "kv_format": "original",
+        "attention_backend": "sdpa",
+        "cache_placement": "GPU resident compact",
+        "graphs": true,
+        "extended_graphs": true,
+        "compile_stateless": false,
+        "camera_graph": true,
+        "store_kv_compute_dtype": true,
+        "prefetch_images": true,
+        "fused_int4_epilogue": false,
+        "compressed_kv_fused_sdpa_decode": null,
+        "compressed_kv_deduplicate_special_scales": null,
+        "allocator_config": "expandable_segments:True",
+        "requested_allocator_budget_gb": null,
+        "prefill_mlp_chunk_tokens": null,
+        "prefill_frame_batch_size": null,
+        "defer_kv_reserve": null,
+        "warmup_frames": 248
+      },
+      "recorded_run": "indoor_bf16_final"
+    },
+    {
+      "method": "Calibrated W4A4",
+      "fps_repeats": [
+        11.508494817069293
+      ],
+      "peak_allocated_bytes": 4811415040,
+      "peak_reserved_bytes": 5152702464,
+      "runtime": {
+        "gpu": "NVIDIA GeForce RTX 5090",
+        "linear_backend": "w4a4_codes_int8_gemm",
+        "trunk_precision": "bf16",
+        "camera_precision": "fp32",
+        "depth_precision": "fp32",
+        "kv_format": "fp4",
+        "attention_backend": "sdpa",
+        "cache_placement": "GPU resident compressed",
+        "graphs": true,
+        "extended_graphs": true,
+        "compile_stateless": true,
+        "camera_graph": true,
+        "store_kv_compute_dtype": false,
+        "prefetch_images": true,
+        "fused_int4_epilogue": false,
+        "compressed_kv_fused_sdpa_decode": true,
+        "compressed_kv_deduplicate_special_scales": true,
+        "allocator_config": "expandable_segments:True",
+        "requested_allocator_budget_gb": 5.2,
+        "prefill_mlp_chunk_tokens": 783,
+        "prefill_frame_batch_size": 1,
+        "defer_kv_reserve": true,
+        "warmup_frames": 248
+      },
+      "recorded_run": "indoor_native_calibrated_final",
+      "pose_consistency_vs_bf16": {
+        "reference_kind": "BF16 prediction, not ground truth",
+        "trajectory_alignment": "official TrajectoryEvaluator Sim3",
+        "depth_alignment": "official DepthEvaluator per-frame scale_only, GT clip (0,80)",
+        "point_protocol": "corresponding-pixel EPE after trajectory Sim3, not ICP/Chamfer reconstruction benchmark",
+        "camera": {
+          "ate": 5.241354482511423,
+          "rpe_trans": 0.1959061179111066,
+          "rpe_rot": 2.6262660493283985
+        },
+        "trajectory_transform": [
+          [
+            0.7220306650620429,
+            0.38127799077564517,
+            -0.6053972750301497,
+            2.7787748883161387
+          ],
+          [
+            -0.33343062670900764,
+            0.9403115975731958,
+            0.19453833759843328,
+            -3.545344219987055
+          ],
+          [
+            0.6330108877707256,
+            0.06040067361553607,
+            0.7930044279474653,
+            5.711795952767334
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "depth_consistency_vs_bf16": {
+        "abs_rel": 0.37964945675769046,
+        "rmse": 0.9453356054064349,
+        "pixels": 761460000,
+        "mask": "same positive finite BF16 pixels for both methods; no confidence/residual filtering",
+        "alignment": "none",
+        "reference_kind": "BF16 prediction, not ground truth"
+      },
+      "process_memory": {
+        "sampled_peak_process_bytes": 5872025600,
+        "sample_count": 9544,
+        "sample_interval_seconds": 0.05,
+        "sampler": "NVML physical-device process accounting",
+        "scope": "Child process GPU memory from launch to exit, including context/libraries and allocator reservations. Sampled peak can miss short transients; pair with PyTorch peak counters."
+      }
+    },
+    {
+      "method": "DSFQ (ours)",
+      "fps_repeats": [
+        11.986831511788777,
+        12.476615779636644,
+        12.78622835354778
+      ],
+      "peak_allocated_bytes": 4814167552,
+      "peak_reserved_bytes": 5156896768,
+      "runtime": {
+        "gpu": "NVIDIA GeForce RTX 5090",
+        "linear_backend": "w4a4_codes_int8_gemm",
+        "trunk_precision": "bf16",
+        "camera_precision": "fp32",
+        "depth_precision": "fp32",
+        "kv_format": "fp4",
+        "attention_backend": "sdpa",
+        "cache_placement": "GPU resident compressed",
+        "graphs": true,
+        "extended_graphs": true,
+        "compile_stateless": true,
+        "camera_graph": true,
+        "store_kv_compute_dtype": false,
+        "prefetch_images": true,
+        "fused_int4_epilogue": false,
+        "compressed_kv_fused_sdpa_decode": true,
+        "compressed_kv_deduplicate_special_scales": true,
+        "allocator_config": "expandable_segments:True",
+        "requested_allocator_budget_gb": 5.2,
+        "prefill_mlp_chunk_tokens": 783,
+        "prefill_frame_batch_size": 1,
+        "defer_kv_reserve": true,
+        "warmup_frames": 248
+      },
+      "recorded_run": "indoor_dsfq_final",
+      "pose_consistency_vs_bf16": {
+        "reference_kind": "BF16 prediction, not ground truth",
+        "trajectory_alignment": "official TrajectoryEvaluator Sim3",
+        "depth_alignment": "official DepthEvaluator per-frame scale_only, GT clip (0,80)",
+        "point_protocol": "corresponding-pixel EPE after trajectory Sim3, not ICP/Chamfer reconstruction benchmark",
+        "camera": {
+          "ate": 0.3043746547078517,
+          "rpe_trans": 0.03106598595519483,
+          "rpe_rot": 0.5811617210710321
+        },
+        "trajectory_transform": [
+          [
+            1.0374444832293253,
+            0.014384190476875648,
+            0.013345840887475981,
+            -0.8320334142489365
+          ],
+          [
+            -0.014220818254735208,
+            1.037454710007595,
+            -0.012710829982873765,
+            0.32122360367431124
+          ],
+          [
+            -0.013519790413858349,
+            0.01252565108138862,
+            1.0374663346440613,
+            -0.19655786548817922
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      },
+      "depth_consistency_vs_bf16": {
+        "abs_rel": 0.02166818414685505,
+        "rmse": 0.06833566631596706,
+        "pixels": 761460000,
+        "mask": "same positive finite BF16 pixels for both methods; no confidence/residual filtering",
+        "alignment": "none",
+        "reference_kind": "BF16 prediction, not ground truth"
+      },
+      "process_memory": {
+        "sampled_peak_process_bytes": 5876219904,
+        "sample_count": 24472,
+        "sample_interval_seconds": 0.05,
+        "sampler": "NVML physical-device process accounting",
+        "scope": "Child process GPU memory from launch to exit, including context/libraries and allocator reservations. Sampled peak can miss short transients; pair with PyTorch peak counters."
+      }
+    }
+  ]
+}
