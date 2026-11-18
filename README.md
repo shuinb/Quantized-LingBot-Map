@@ -20,7 +20,17 @@ A compact post-training quantization and inference project built on [LingBot-Map
 - Calibrate both quantized methods on the same independent desk/rpy clips: 320 frames, six captured streaming states per block, 15 reconstruction epochs. Original model weights are not trained.
 - Reduce peak memory through compressed KV, deferred cache allocation, chunked initialization and CUDA Graphs. Keep 294×518 inputs, eight anchors, 64-frame local history and keyframe interval two.
 
-## Results and visualization
+## Reconstruction gallery
+
+![DSFQ on TUM XYZ: RGB input, relative depth and a colored point map](assets/gallery_xyz.png)
+
+![DSFQ on Indoor Travel: RGB input, relative depth and a colored point map](assets/gallery_showroom.png)
+
+<p align="center"><img src="assets/orbit_xyz.gif" width="49%" alt="Virtual camera orbit of the fixed XYZ point map"> <img src="assets/orbit_showroom.gif" width="49%" alt="Virtual camera orbit of the fixed showroom point map"></p>
+
+Fresh DSFQ inference on **GPU0: 732 XYZ frames** and **GPU1: 496 Indoor frames**, using the published weights and 294×518 inputs. These are curated local views: XYZ frames **200–327** and Indoor frames **1216–1279**. Each map samples 64 views with pixel stride 2 and removes the lowest 20% of depth confidence per frame. The GIFs move a virtual camera around a fixed predicted point map; they do not show online reconstruction speed. RGB/depth panels are unmasked; depth colors saturate at the 2nd/98th percentiles. No GT geometry, mesh filling or recalibration is used. [Rendering details](results/gallery.json) · [Reproduce the gallery](docs/visualization.md).
+
+## Results and comparison
 
 TUM fr1/xyz, 732 frames; lower is better:
 
@@ -33,6 +43,10 @@ TUM fr1/xyz, 732 frames; lower is better:
 The calibrated W4A4 row above uses **direct LWC/LAC + FP4 KV**. With otherwise matched settings and BF16 KV, calibration reduces XYZ ATE from **8.180 to 6.183 cm**; with FP4 KV, it changes **7.714 to 8.805 cm**. The BF16 KV control uses about 9.03 GB of peak PyTorch allocated memory. These results cover this particular calibration recipe and cache configuration. [Audit data](results/calibration_audit.json) · [Diagnostic figure](assets/calibration_audit.png).
 
 ![XYZ trajectories and position error for the three methods](assets/trajectory_xyz.png)
+
+![Same-frame relative-depth comparison: RGB, BF16, calibrated W4A4 and DSFQ](assets/depth_comparison.png)
+
+The depth grid shows XYZ frames 164, 429 and 694. Each method/frame is divided by its own median depth; all methods then share the BF16 2nd/98th-percentile color limits within each row, without confidence masking. This displays relative shape, not metric scale or ground-truth error. [PDF](assets/depth_comparison.pdf).
 
 Indoor Travel RGB maps from 64 evenly sampled frames of the 5,000-frame sequence:
 
@@ -48,7 +62,7 @@ DSFQ’s ATE and depth AbsRel are close to BF16; RPE still degrades. Poses use o
 
 ## Install
 
-Tested with Linux, Python 3.12, PyTorch 2.9.1 and CUDA 12.8. Use one visible GPU at a time. BF16 needs substantially more free VRAM than the quantized methods; the full three-method measurements used an RTX 5090.
+Tested with Linux, Python 3.12, PyTorch 2.9.1 and CUDA 12.8. Each inference process uses one visible GPU. BF16 needs substantially more free VRAM than the quantized methods; the full three-method measurements used an RTX 5090.
 
 ```bash
 git clone https://github.com/shuinb/Quantized-LingBot-Map.git
@@ -135,6 +149,21 @@ python -m qmap visualize \
 ```
 
 Evaluation writes JSON/Markdown comparisons. Visualization writes trajectory PNG/SVG, RGB map PNG and colored PLY files. Without TUM GT, omit the two evaluation GT arguments and the visualization `--data` argument; put BF16 first to use it as the prediction reference. Add `--memory-reports DSFQ=runs/dsfq_memory.json` when evaluating the corresponding measured run.
+
+Create the README-style RGB/depth/map panel and optional GIF from a completed DSFQ run; this rendering step uses CPU:
+
+```bash
+CUDA_VISIBLE_DEVICES='' python -m qmap gallery --run runs/xyz_dsfq \
+  --output runs/xyz_gallery --title 'TUM XYZ / workspace' \
+  --frame 200 --map-start 136 --map-end 264 --pixel-stride 2 \
+  --yaw -25 --elevation 5 --animation-frames 40
+
+CUDA_VISIBLE_DEVICES='' python -m qmap depth-gallery \
+  --runs BF16=runs/xyz_bf16 'Calibrated W4A4=runs/xyz_w4a4' DSFQ=runs/xyz_dsfq \
+  --frames 100 365 630 --output runs/depth_gallery
+```
+
+Frame arguments are zero-based indices within the run. `gallery` also writes a colored PLY and JSON recording the rendering choices. See [visualization recipes](docs/visualization.md) for the Indoor example.
 
 ## Layout and checks
 

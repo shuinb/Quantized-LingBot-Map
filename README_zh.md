@@ -20,7 +20,17 @@
 - 两种量化使用相同的独立 desk/rpy 校准片段：共 320 帧，每块捕获六个真实流式状态，重构 15 个 epoch，不训练原始模型权重。
 - 用压缩 KV、延迟缓存预留、分批初始化和 CUDA Graph 降低显存；保留 294×518 输入、八个锚点、64 帧局部历史和关键帧间隔二。
 
-## 结果与可视化
+## 重建展示
+
+![DSFQ 在 TUM XYZ 上的 RGB 输入、相对深度与彩色点云](assets/gallery_xyz.png)
+
+![DSFQ 在 Indoor Travel 上的 RGB 输入、相对深度与彩色点云](assets/gallery_showroom.png)
+
+<p align="center"><img src="assets/orbit_xyz.gif" width="49%" alt="虚拟相机围绕固定 XYZ 点云旋转"> <img src="assets/orbit_showroom.gif" width="49%" alt="虚拟相机围绕固定展厅点云旋转"></p>
+
+使用已发布权重重新推理：**GPU0 跑 732 帧 XYZ，GPU1 跑 496 帧 Indoor**，输入仍为 294×518。上图是选取的局部展示：XYZ 第 **200–327** 帧、Indoor 第 **1216–1279** 帧；每张点云均匀采样 64 帧，像素步长为 2，并去除每帧深度置信度最低的 20%。动图展示固定预测点云的虚拟视角旋转，不表示在线建图速度。RGB／深度面板不做置信度遮罩，深度色阶在第 2／98 百分位饱和；没有引入真值几何、网格补全或重新校准。[渲染记录](results/gallery.json) · [复现展示图](docs/visualization.md)。
+
+## 结果与对比
 
 TUM fr1/xyz，732 帧真值评估，数值越低越好：
 
@@ -33,6 +43,10 @@ TUM fr1/xyz，732 帧真值评估，数值越低越好：
 上表的校准 W4A4 采用 **直接 LWC/LAC＋FP4 KV**。其他计算设置相同时，使用 BF16 KV，校准将 XYZ ATE 从 **8.180 降至 6.183 cm**；使用 FP4 KV，则从 **7.714 变为 8.805 cm**。BF16 KV 对照的 PyTorch allocated 峰值约 9.03 GB。结果仅代表这套校准方法和缓存配置。[核查数据](results/calibration_audit.json) · [诊断图](assets/calibration_audit.png)。
 
 ![三种方法在 XYZ 上的轨迹和位置误差](assets/trajectory_xyz.png)
+
+![相同帧的相对深度对比：RGB、BF16、校准 W4A4、DSFQ](assets/depth_comparison.png)
+
+深度网格使用 XYZ 第 164、429、694 帧。每个方法的每帧深度除以自身中位数，同一行再统一采用 BF16 的第 2／98 百分位色阶，不做置信度遮罩。该图比较相对形状，不表示绝对尺度或真值误差。[PDF](assets/depth_comparison.pdf)。
 
 Indoor Travel 5000 帧中均匀选取 64 帧生成的 RGB 点云地图：
 
@@ -48,7 +62,7 @@ DSFQ 的 ATE 和深度 AbsRel 接近 BF16，RPE 仍有差距。位姿采用一�
 
 ## 安装
 
-已测环境为 Linux、Python 3.12、PyTorch 2.9.1、CUDA 12.8。每次只使用一张可见 GPU。BF16 需要比量化版更多的空闲显存，完整三方法测量使用 RTX 5090。
+已测环境为 Linux、Python 3.12、PyTorch 2.9.1、CUDA 12.8。每个推理进程使用一张可见 GPU。BF16 需要比量化版更多的空闲显存，完整三方法测量使用 RTX 5090。
 
 ```bash
 git clone https://github.com/shuinb/Quantized-LingBot-Map.git
@@ -135,6 +149,21 @@ python -m qmap visualize \
 ```
 
 评估输出 JSON／Markdown 对比。可视化输出轨迹 PNG／SVG、RGB 地图 PNG 和彩色 PLY。没有 TUM 真值时，省略两个评估 GT 参数和可视化的 `--data`，将 BF16 放在第一项作为预测参照。评估对应的显存采样运行时，可追加 `--memory-reports DSFQ=runs/dsfq_memory.json`。
+
+从已完成的 DSFQ 推理生成 README 风格的 RGB／深度／点云图及可选动图；渲染步骤只使用 CPU：
+
+```bash
+CUDA_VISIBLE_DEVICES='' python -m qmap gallery --run runs/xyz_dsfq \
+  --output runs/xyz_gallery --title 'TUM XYZ / workspace' \
+  --frame 200 --map-start 136 --map-end 264 --pixel-stride 2 \
+  --yaw -25 --elevation 5 --animation-frames 40
+
+CUDA_VISIBLE_DEVICES='' python -m qmap depth-gallery \
+  --runs BF16=runs/xyz_bf16 'Calibrated W4A4=runs/xyz_w4a4' DSFQ=runs/xyz_dsfq \
+  --frames 100 365 630 --output runs/depth_gallery
+```
+
+帧参数均为当前推理序列内从 0 开始的索引。`gallery` 同时输出彩色 PLY 和记录渲染参数的 JSON。Indoor 示例见[可视化用法](docs/visualization.md)。
 
 ## 目录与检查
 

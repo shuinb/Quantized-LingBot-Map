@@ -9,6 +9,8 @@ COMMANDS = {
     'infer': 'Run BF16, calibrated W4A4, or DSFQ on an image sequence',
     'evaluate': 'Compare completed runs against BF16 and optional TUM ground truth',
     'visualize': 'Render trajectories and RGB point clouds from saved predictions',
+    'gallery': 'Create a DSFQ RGB/depth/point-map showcase and optional orbit GIF',
+    'depth-gallery': 'Compare the same RGB frames and relative depths across methods',
     'prepare-tum': 'Extract and associate an official TUM RGB-D archive',
     'memory': 'Measure one inference process with NVML',
 }
